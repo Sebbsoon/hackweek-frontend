@@ -10,17 +10,9 @@ export interface User {
   description: string;
 }
 
-export interface Gallery {
-  id: string;
-  user_id: string;
-  title: string;
-}
 
-export interface Image {
-  id: string;
-  gallery_id: string;
-  url: string;
-}
+
+
 
 export interface ApiResponse<T> {
   data: T | null;
