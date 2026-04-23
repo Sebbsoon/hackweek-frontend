@@ -21,7 +21,7 @@ const GalleryApp = () => {
         <Register />
       </SignedOut>
       <SignedIn>
-        <SignOutButton/>
+        <SignOutButton redirectUrl="/hackweek-frontend" />
         <GalleryList />
       </SignedIn>
     </main>
