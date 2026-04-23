@@ -21,11 +21,21 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-
+    env:
+      VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+      VITE_CLERK_SIGN_IN_URL: ${{ secrets.VITE_CLERK_SIGN_IN_URL }}
+      VITE_CLERK_SIGN_UP_URL: ${{ secrets.VITE_CLERK_SIGN_UP_URL }}
+      VITE_CLERK_AFTER_SIGN_IN_URL: ${{ secrets.VITE_CLERK_AFTER_SIGN_IN_URL }}
+      VITE_CLERK_AFTER_SIGN_UP_URL: ${{ secrets.VITE_CLERK_AFTER_SIGN_UP_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-       
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
       
