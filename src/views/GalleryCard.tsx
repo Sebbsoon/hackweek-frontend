@@ -1,22 +1,9 @@
-type Gallery = {
-  id: string;
-  user_id: string;
-  title: string;
-  images?: Image[];
-  description?: string;
-};
-
-type Image = {
-  id: string;
-  gallery_id: string;
-  url: string;
-};
-
-const GalleryCard = ({ gallery }: { gallery: Gallery }) => {
+const GalleryCard = ({ gallery, selectGallery }: { gallery: UserGallery; selectGallery: (gallery: UserGallery) => void }) => {
   return (
-    <div key={gallery.id}>
+    <div>
       <h2>{gallery.title}</h2>
       <p>{gallery.description}</p>
+      <button onClick={() => selectGallery(gallery)}>View Gallery</button>
     </div>
   );
 };

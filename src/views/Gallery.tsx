@@ -1,18 +1,12 @@
-type Gallery = {
-  id: string;
-  user_id: string;
-  title: string;
-  images?: Image[];
-};
+import ImageUpload from "./ImageUpload";
 
-type Image = {
-  id: string;
-  gallery_id: string;
-  url: string;
-};
-const Gallery = ({ gallery }: { gallery: Gallery }) => {
+const Gallery = ({ gallery, addImageToGallery }: { gallery: UserGallery | null; addImageToGallery: (galleryId: string, image: Image) => void }) => {
+  if (!gallery) {
+    return <p>Gallery not found.</p>;
+  }
+
   return (
-    <div key={gallery.id}>
+    <div >
       <h2>{gallery.title}</h2>
       <div style={{ display: "flex", gap: "10px" }}>
         {gallery.images?.map((image) => (
@@ -24,6 +18,7 @@ const Gallery = ({ gallery }: { gallery: Gallery }) => {
           />
         ))}
       </div>
+      <ImageUpload galleryId={gallery.id} addImageToGallery={addImageToGallery}/>
     </div>
   );
 };
