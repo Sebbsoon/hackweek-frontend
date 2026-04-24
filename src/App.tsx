@@ -1,26 +1,6 @@
 import { ClerkProvider } from "@clerk/clerk-react";
 import GalleryApp from "./views/GalleryApp";
 
-// Types derived from Section 8 & 10 of project-plan.md
-export interface User {
-  id: string;
-  username: string;
-  first_name: string;
-  last_name: string;
-  description: string;
-}
-
-
-
-
-
-export interface ApiResponse<T> {
-  data: T | null;
-  error: {
-    code: string;
-    message: string;
-  } | null;
-}
 
 import { BrowserRouter } from 'react-router-dom';
 
