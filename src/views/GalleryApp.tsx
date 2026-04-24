@@ -5,7 +5,7 @@ import {
   useAuth,
   useUser,
 } from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import img1 from "../assets/Gallery/20240226_235955.jpg";
 import img2 from "../assets/Gallery/20250318_164818.jpg";
 import img3 from "../assets/Gallery/Aqua.png";
@@ -44,6 +44,13 @@ const mockGalleries: UserGallery[] = [
 
 const mockedUsers: User[] = [
   {
+    id: "user_3ClKsTp1NDEX8EywrJZj85xCOf7",
+    username: "sebastian",
+    galleries: [],
+    profile_picture_url: "",
+    description: "A new user of the Gallery App.",
+  },
+  {
     id: "user1",
     username: "john_doe",
     galleries: [mockGalleries[0]],
@@ -59,69 +66,50 @@ const mockedUsers: User[] = [
   },
 ];
 
-function fetchGalleryById(galleryId: string): UserGallery | null {
-  const gallery = mockGalleries.find((g) => g.id === galleryId);
-  return gallery || null;
-}
-
 function fetchUsers(): User[] {
   return mockedUsers;
+}
+
+function fetchUserById(userId: string): User | null {
+  const user = mockedUsers.find((u) => u.id === userId);
+  return user || null;
 }
 
 const GalleryApp = () => {
   const { isLoaded } = useAuth();
   const { user } = useUser();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentGallery, setCurrentGallery] = useState<UserGallery | null>(
     null,
   );
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const users = fetchUsers();
-
-  useEffect(() => {
-    console.log("User data changed:", user);
-    if (user) {
-      const loggedInUser: User = {
-        id: user.id,
-        username: user.username || "Unknown",
-        galleries: users.find((u) => u.id === user.id)?.galleries || [],
-        profile_picture_url: user.imageUrl || "",
-        description: "A new user of the Gallery App.",
-      };
-
-      setCurrentUser(loggedInUser);
-    } else {
-      setCurrentUser(null);
-    }
-  }, [user]);
+  const currentUser = useMemo<User | null>(() => {
+    if (!user) return null;
+    return users.find((u) => u.id === user.id) ?? null;
+  }, [user, users]);
 
   function addImageToGallery(galleryId: string, image: Image) {
+    console.log(`Adding image ${image.id} to gallery ${galleryId}`);
     if (!currentUser) return;
-    mockGalleries.forEach((gallery) => {
-      if (gallery.id === galleryId) {
-        if (gallery.user_id !== currentUser.id) {
-          console.warn("User does not own this gallery. Cannot add image.");
-          return;
-        }
-        if (!gallery.images) {
-          gallery.images = [];
-        }
-        gallery.images.push(image);
-        console.log(`Added image ${image.id} to gallery ${galleryId}`);
-        console.log("Updated gallery:", gallery);
-      }
-    });
+    const gallery = currentUser.galleries?.find((g) => g.id === galleryId);
+    if (!gallery) {
+      console.warn("Gallery not found for current user. Cannot add image.");
+      return;
+    }
+    if (!gallery.images) {
+      gallery.images = [];
+    }
+    gallery.images.push(image);
+    console.log(`Added image ${image.id} to gallery ${galleryId}`);
+    console.log("Updated gallery:", gallery);
   }
 
   function createGallery(gallery: UserGallery) {
     if (!currentUser) return;
-    mockGalleries.push(gallery);
-    setCurrentUser({
-      ...currentUser,
-      galleries: [...currentUser.galleries, gallery],
-    });
+    currentUser.galleries.push(gallery);
     console.log("Created new gallery:", gallery);
-    console.log("Updated user galleries:", currentUser?.galleries);
+    console.log("Updated user galleries:", currentUser);
   }
 
   const [view, setView] = useState<
@@ -133,6 +121,24 @@ const GalleryApp = () => {
     | "gallery"
     | "upload"
   >("home");
+
+  useEffect(() => {
+    console.log("User data changed:", user);
+    if (user) {
+      const loggedInUser: User | null = fetchUserById(user.id);
+      console.log("Found user:", loggedInUser);
+    } else {
+      console.log("No user logged in");
+    }
+  }, [user, users]);
+
+  useEffect(() => {
+    console.log("Current gallery changed:", currentGallery);
+  }, [currentGallery]);
+  useEffect(() => {
+    console.log("Selected user changed:", selectedUser);
+  }, [selectedUser]);
+
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
@@ -143,12 +149,11 @@ const GalleryApp = () => {
         Current Gallery:{" "}
         {currentGallery ? currentGallery.title : "None selected"}
       </p>
+      <p>Selected user: {selectedUser?.username}</p>
       <div>
         <button onClick={() => setView("home")}>Home</button>
         <button onClick={() => setView("profile")}>Profile</button>
         <button onClick={() => setView("gallery")}>Gallery</button>
-        <button onClick={() => setView("galleries")}>Galleries</button>
-        <button onClick={() => setView("upload")}>Upload</button>
         <button onClick={() => setView("create-gallery")}>
           Create Gallery
         </button>
@@ -167,16 +172,24 @@ const GalleryApp = () => {
       {view === "home" && (
         <>
           <h1>Welcome to the Gallery App!</h1>
-          <UserList users={users} />
+          <UserList users={users} selectUser={setSelectedUser} />
         </>
       )}
-      {view === "profile" && <UserProfile currentUser={currentUser} />}
+      {view === "profile" && (
+        <UserProfile
+          user={selectedUser}
+          currentUser={currentUser}
+          selectGallery={setCurrentGallery}
+          addImageToGallery={addImageToGallery}
+        />
+      )}
       {view === "gallery" && (
         <>
           <h1>Gallery Page</h1>
           <Gallery
             gallery={currentGallery}
             addImageToGallery={addImageToGallery}
+            currentUser={currentUser}
           />
         </>
       )}

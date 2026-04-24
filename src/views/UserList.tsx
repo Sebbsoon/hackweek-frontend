@@ -1,4 +1,10 @@
-const UserList = ({ users }: { users: User[] }) => {
+const UserList = ({
+  users,
+  selectUser,
+}: {
+  users: User[];
+  selectUser: (user: User) => void;
+}) => {
   return (
     <div>
       <h1>User List</h1>
@@ -7,6 +13,7 @@ const UserList = ({ users }: { users: User[] }) => {
         <div key={user.id}>
           <h2>{user.username}</h2>
           <p>{user.description}</p>
+          <button onClick={() => selectUser(user)}>View Profile</button>
         </div>
       ))}
     </div>

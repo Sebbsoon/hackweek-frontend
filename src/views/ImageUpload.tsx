@@ -46,7 +46,7 @@ const ImageUpload = ({
   return (
     <>
       <h1>Upload Images</h1>
-      <p>Upload your images here.</p>
+      <p>Upload your images to gallery {galleryId} here.</p>
       <div>
         <input type="file" onChange={handleChange} />
         <input
