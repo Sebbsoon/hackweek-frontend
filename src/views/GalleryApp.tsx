@@ -18,6 +18,7 @@ import Login from "./Login";
 import Register from "./Register";
 import UserList from "./UserList";
 import UserProfile from "./UserProfile";
+import { createGallery, getUsers } from "../api/api";
 
 const mockGalleries: UserGallery[] = [
   {
@@ -66,10 +67,6 @@ const mockedUsers: User[] = [
   },
 ];
 
-function fetchUsers(): User[] {
-  return mockedUsers;
-}
-
 function fetchUserById(userId: string): User | null {
   const user = mockedUsers.find((u) => u.id === userId);
   return user || null;
@@ -83,11 +80,24 @@ const GalleryApp = () => {
   );
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const users = fetchUsers();
+  const [users, setUsers] = useState<User[]>([]);
   const currentUser = useMemo<User | null>(() => {
     if (!user) return null;
     return users.find((u) => u.id === user.id) ?? null;
   }, [user, users]);
+
+  function fetchUsers(): User[] {
+    console.log("Fetching users...");
+    getUsers()
+      .then((fetchedUsers) => {
+        console.log("Fetched users:", fetchedUsers);
+        setUsers(fetchedUsers);
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+      });
+    return users;
+  }
 
   function addImageToGallery(galleryId: string, image: Image) {
     console.log(`Adding image ${image.id} to gallery ${galleryId}`);
@@ -103,13 +113,6 @@ const GalleryApp = () => {
     gallery.images.push(image);
     console.log(`Added image ${image.id} to gallery ${galleryId}`);
     console.log("Updated gallery:", gallery);
-  }
-
-  function createGallery(gallery: UserGallery) {
-    if (!currentUser) return;
-    currentUser.galleries.push(gallery);
-    console.log("Created new gallery:", gallery);
-    console.log("Updated user galleries:", currentUser);
   }
 
   const [view, setView] = useState<
@@ -157,6 +160,7 @@ const GalleryApp = () => {
         <button onClick={() => setView("create-gallery")}>
           Create Gallery
         </button>
+        <button onClick={() => fetchUsers()}>Fetch Users</button>
       </div>
       <SignedOut>
         <Login />
