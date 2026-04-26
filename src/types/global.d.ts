@@ -20,5 +20,11 @@ declare global {
     profile_picture_url: string;
     description: string;
   };
+  type CreateGalleryPayload = {
+    title: string;
+    description?: string;
+    images?: unknown[];
+    user_id?: string;
+  };
 }
 export {};
