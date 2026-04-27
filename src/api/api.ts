@@ -104,13 +104,12 @@ export async function addImageToGallery(
 }
 
 export async function deleteImageFromGallery(
-  galleryId: string,
   imageId: string,
   token?: string,
 ): Promise<void> {
   const res = await fetch(
     apiUrl(
-      `/api/galleries/${encodeURIComponent(galleryId)}/images/${encodeURIComponent(imageId)}`,
+      `/api/images/${encodeURIComponent(imageId)}`,
     ),
     {
       method: "DELETE",
@@ -121,7 +120,7 @@ export async function deleteImageFromGallery(
   );
   if (!res.ok)
     throw new Error(
-      `DELETE /api/galleries/${galleryId}/images/${imageId} failed: ${res.status}`,
+      `DELETE /api/images/${imageId} failed: ${res.status}`,
     );
 }
 
