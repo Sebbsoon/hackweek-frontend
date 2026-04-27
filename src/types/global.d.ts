@@ -4,7 +4,7 @@ declare global {
     userId: string;
     title: string;
     displayImageUrl?: string;
-    images?: Image[];
+    images: Image[];
     description?: string;
   };
   type Image = {
