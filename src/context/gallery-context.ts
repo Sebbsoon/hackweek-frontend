@@ -10,6 +10,9 @@ export type GalleryContextValue = {
   setCurrentGallery: React.Dispatch<React.SetStateAction<UserGallery | null>>;
   users: User[];
   setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+  galleryImages: Image[];
+  setGalleryImages: React.Dispatch<React.SetStateAction<Image[]>>;
+  removeImageLocally: (imageId: string) => void; 
 };
 
 export const GalleryContext = createContext<GalleryContextValue | undefined>(

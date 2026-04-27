@@ -1,15 +1,31 @@
 import { useUser } from "@clerk/clerk-react";
-import { useEffect, useMemo, useState } from "react";
-import { getUsers } from "../api/api";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { getGalleryImages, getUsers } from "../api/api";
 import { GalleryContext } from "./gallery-context";
 
-export const GalleryProvider = ({ children }: { children: React.ReactNode }) => {
+export const GalleryProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [currentView, setCurrentView] = useState<string>("home");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
-  const [currentGallery, setCurrentGallery] = useState<UserGallery | null>(null);
+  const [galleryImages, setGalleryImages] = useState<Image[]>([]);
+  const [currentGallery, setCurrentGallery] = useState<UserGallery | null>(
+    null,
+  );
   const [users, setUsers] = useState<User[]>([]);
   const { user } = useUser();
+
+  useEffect(() => {
+    console.log("GalleryContext state updated:", {
+      currentView,
+      selectedUser,
+      currentGallery,
+      users,
+      galleryImages,
+    });
+  }, [currentView, selectedUser, currentGallery, users, galleryImages]);
 
   useEffect(() => {
     let isMounted = true;
@@ -36,9 +52,32 @@ export const GalleryProvider = ({ children }: { children: React.ReactNode }) => 
     };
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    if (currentGallery) {
+      getGalleryImages(currentGallery.id)
+        .then((images) => {
+          if (isMounted) setGalleryImages(images);
+        })
+        .catch((error) => {
+          console.error("Error fetching gallery images:", error);
+          if (isMounted) setGalleryImages([]);
+        });
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentGallery]);
+
+  const removeImageLocally = useCallback((imageId: string) => {
+    setGalleryImages((prev) => prev.filter((img) => img.id !== imageId));
+  }, []);
+
   const currentUser =
     user && Array.isArray(users)
-      ? users.find((u) => u.clerkUserId === user.id) ?? null
+      ? (users.find((u) => u.clerkUserId === user.id) ?? null)
       : null;
 
   const value = useMemo(
@@ -52,9 +91,22 @@ export const GalleryProvider = ({ children }: { children: React.ReactNode }) => 
       setCurrentGallery,
       users,
       setUsers,
+      galleryImages,
+      setGalleryImages,
+      removeImageLocally,
     }),
-    [currentView, selectedUser, currentUser, currentGallery, users],
+    [
+      currentView,
+      selectedUser,
+      currentUser,
+      currentGallery,
+      users,
+      galleryImages,
+      removeImageLocally,
+    ],
   );
 
-  return <GalleryContext.Provider value={value}>{children}</GalleryContext.Provider>;
+  return (
+    <GalleryContext.Provider value={value}>{children}</GalleryContext.Provider>
+  );
 };
