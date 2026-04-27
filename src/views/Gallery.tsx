@@ -4,13 +4,6 @@ import ImageUpload from "../components/ImageUpload";
 const Gallery = () => {
   const { currentGallery: gallery, currentUser } = useGallery();
 
-
-  const addImageToGallery = (galleryId: string, image: Image) => {
-    console.log("Adding image to gallery", galleryId, image);
-    // Here you would typically make an API call to add the image to the gallery
-  };
-
-  
   if (!gallery) {
     return <p>Gallery not found.</p>;
   }
@@ -34,10 +27,6 @@ const Gallery = () => {
       {gallery.userId === currentUser?.id && (
         <ImageUpload
           galleryId={gallery.id}
-          addImageToGallery={(id, image) => {
-            console.log(id, image);
-            return addImageToGallery(id, image);
-          }}
         />
       )}
     </div>

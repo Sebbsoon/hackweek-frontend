@@ -66,26 +66,40 @@ export async function getGalleryImages(galleryId: string): Promise<Image[]> {
   return (await res.json()) as Image[];
 }
 
+export type AddImagePayload = {
+  file: File;
+  title?: string;
+  description?: string;
+};
+
 export async function addImageToGallery(
   galleryId: string,
-  image: Omit<Image, "id" | "gallery_id">,
+  payload: AddImagePayload,
   token?: string,
 ): Promise<Image> {
+  const formData = new FormData();
+  formData.append("file", payload.file);
+
+  if (payload.title) formData.append("title", payload.title);
+  if (payload.description) formData.append("description", payload.description);
+
   const res = await fetch(
     apiUrl(`/api/galleries/${encodeURIComponent(galleryId)}/images`),
     {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: JSON.stringify(image),
+      body: formData,
     },
   );
-  if (!res.ok)
+
+  if (!res.ok) {
     throw new Error(
       `POST /api/galleries/${galleryId}/images failed: ${res.status}`,
     );
+  }
+
   return (await res.json()) as Image;
 }
 

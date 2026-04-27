@@ -1,64 +1,82 @@
-import { useUser } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import { useState } from "react";
+import { addImageToGallery } from "../api/api";
 
-type ImageUploadRequest = {
-  file: File;
-  galleryId: string;
-  userId: string;
-  title: string;
-  description?: string;
-};
-
-const ImageUpload = ({
-  galleryId,
-  addImageToGallery,
-}: {
-  galleryId: string;
-  addImageToGallery: (galleryId: string, image: Image) => void;
-}) => {
+const ImageUpload = ({ galleryId }: { galleryId: string }) => {
   const { user } = useUser();
-  const [file, setFile] = useState<File | undefined | null>(null);
+  const { getToken } = useAuth();
+
+  const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
+    const selectedFile = event.target.files?.[0] ?? null;
     setFile(selectedFile);
   };
-  const handleUpload = () => {
-    console.log("Upload button clicked");
-    const newRequest: ImageUploadRequest = {
-      file: file!,
-      galleryId: galleryId,
-      userId: user!.id,
-      title: title,
-    };
 
-    console.log("New upload request:", newRequest);
-    setFile(undefined);
-    setTitle("");
-    addImageToGallery(galleryId, {
-      id: `img-${Date.now()}`,
-      galleryId: galleryId,
-      url: URL.createObjectURL(newRequest.file),
-      title: newRequest.title,
-    });
+  const handleUpload = async () => {
+    if (!file || !title.trim()) return;
+
+    try {
+      setIsUploading(true);
+      setError(null);
+
+      const token = await getToken();
+
+      await addImageToGallery(
+        galleryId,
+        {
+          file,
+          title: title.trim(),
+          description: description.trim() || undefined,
+        },
+        token ?? undefined,
+      );
+
+      setFile(null);
+      setTitle("");
+      setDescription("");
+    } catch (e) {
+      console.error("Image upload failed:", e);
+      setError("Upload failed. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
   };
+
   if (!user) return <div>Please log in to upload images.</div>;
+
   return (
     <>
       <h1>Upload Images</h1>
       <p>Upload your images to gallery {galleryId} here.</p>
+
       <div>
-        <input type="file" onChange={handleChange} />
+        <input type="file" accept="image/*" onChange={handleChange} />
         <input
           type="text"
           placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <button onClick={handleUpload} disabled={!file || !title}>
-          Upload
+        <input
+          type="text"
+          placeholder="Description (optional)"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <button
+          onClick={handleUpload}
+          disabled={!file || !title.trim() || isUploading}
+        >
+          {isUploading ? "Uploading..." : "Upload"}
         </button>
       </div>
+
+      {error && <p>{error}</p>}
     </>
   );
 };
