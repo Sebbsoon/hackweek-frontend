@@ -2,7 +2,7 @@ import GalleryList from "../components/GalleryList";
 import useGallery from "../hooks/useGallery";
 
 const UserProfile = () => {
-  const { currentUser: user } = useGallery();
+  const { selectedUser: user } = useGallery();
   if (!user) {
     return <div>User not found.</div>;
   }

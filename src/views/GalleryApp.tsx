@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import useGallery from "../hooks/useGallery";
 import Home from "./Home";
 import UserProfile from "./UserProfile";
+import CreateGallery from "../components/CreateGallery";
 
 const GalleryApp = () => {
   const { isLoaded } = useAuth();
@@ -21,6 +22,7 @@ const GalleryApp = () => {
       {view === "galleries" && <GalleryList />}
       {view === "profile" && <UserProfile />}
       {view == "gallery" && <Gallery />}
+      {view === "create-gallery" && <CreateGallery />}
     </main>
   );
 };
