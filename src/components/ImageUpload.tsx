@@ -6,37 +6,42 @@ const ImageUpload = ({ galleryId }: { galleryId: string }) => {
   const { user } = useUser();
   const { getToken } = useAuth();
 
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0] ?? null;
-    setFile(selectedFile);
+    const selectedFiles = Array.from(event.target.files ?? []);
+    setFiles(selectedFiles);
   };
 
   const handleUpload = async () => {
-    if (!file || !title.trim()) return;
+    if (files.length === 0) return;
 
     try {
       setIsUploading(true);
       setError(null);
 
       const token = await getToken();
+      const sharedTitle = title.trim();
 
-      await addImageToGallery(
-        galleryId,
-        {
-          file,
-          title: title.trim(),
-          description: description.trim() || undefined,
-        },
-        token ?? undefined,
+      await Promise.all(
+        files.map((file) =>
+          addImageToGallery(
+            galleryId,
+            {
+              file,
+              title: sharedTitle || file.name,
+              description: description.trim() || undefined,
+            },
+            token ?? undefined,
+          ),
+        ),
       );
 
-      setFile(null);
+      setFiles([]);
       setTitle("");
       setDescription("");
     } catch (e) {
@@ -55,7 +60,7 @@ const ImageUpload = ({ galleryId }: { galleryId: string }) => {
       <p>Upload your images to gallery {galleryId} here.</p>
 
       <div>
-        <input type="file" accept="image/*" onChange={handleChange} />
+        <input type="file" accept="image/*" multiple onChange={handleChange} />
         <input
           type="text"
           placeholder="Title"
@@ -68,14 +73,12 @@ const ImageUpload = ({ galleryId }: { galleryId: string }) => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-        <button
-          onClick={handleUpload}
-          disabled={!file || !title.trim() || isUploading}
-        >
+        <button onClick={handleUpload} disabled={files.length === 0 || isUploading}>
           {isUploading ? "Uploading..." : "Upload"}
         </button>
       </div>
 
+      {isUploading && <p>Uploading images, please wait...</p>}
       {error && <p>{error}</p>}
     </>
   );
