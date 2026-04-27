@@ -37,7 +37,7 @@ const ImageUpload = ({
     setTitle("");
     addImageToGallery(galleryId, {
       id: `img-${Date.now()}`,
-      gallery_id: galleryId,
+      galleryId: galleryId,
       url: URL.createObjectURL(newRequest.file),
       title: newRequest.title,
     });
