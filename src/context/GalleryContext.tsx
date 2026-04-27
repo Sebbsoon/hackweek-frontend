@@ -28,7 +28,7 @@ export const GalleryProvider = ({ children }: { children: React.ReactNode }) => 
   }, []);
 
   const currentUser = user
-    ? (users.find((u) => u.clerkUserId === user.id) ?? null)
+    ? (users?.find((u) => u.clerkUserId === user.id) ?? null)
     : null;
 
   const value = useMemo(
