@@ -16,10 +16,19 @@ export const GalleryProvider = ({ children }: { children: React.ReactNode }) => 
 
     getUsers()
       .then((data) => {
-        if (isMounted) setUsers(data);
+        if (!isMounted) return;
+
+        const normalizedUsers = Array.isArray(data)
+          ? data
+          : Array.isArray((data as { users?: User[] })?.users)
+            ? (data as { users: User[] }).users
+            : [];
+
+        setUsers(normalizedUsers);
       })
       .catch((error) => {
         console.error("Error fetching users:", error);
+        if (isMounted) setUsers([]);
       });
 
     return () => {
@@ -27,9 +36,10 @@ export const GalleryProvider = ({ children }: { children: React.ReactNode }) => 
     };
   }, []);
 
-  const currentUser = user
-    ? (users?.find((u) => u.clerkUserId === user.id) ?? null)
-    : null;
+  const currentUser =
+    user && Array.isArray(users)
+      ? users.find((u) => u.clerkUserId === user.id) ?? null
+      : null;
 
   const value = useMemo(
     () => ({
