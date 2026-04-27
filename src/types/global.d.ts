@@ -11,6 +11,7 @@ declare global {
     id: string;
     galleryId: string;
     url: string;
+    thumbnailUrl?: string;
     title?: string;
   };
   type User = {
@@ -22,6 +23,10 @@ declare global {
     galleries: UserGallery[];
     profilePictureUrl: string;
     description?: string;
+  };
+  type UserResponse = {
+    id: number;
+    clerkUserId: string;
   };
   type CreateGalleryPayload = {
     title: string;
