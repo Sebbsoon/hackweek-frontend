@@ -1,8 +1,6 @@
-import { ClerkProvider } from "@clerk/clerk-react";
 import GalleryApp from "./views/GalleryApp";
 
-
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from "react-router-dom";
 
 function App() {
   const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ?? "";
@@ -13,13 +11,9 @@ function App() {
     );
   }
   return (
-    <ClerkProvider publishableKey={publishableKey}>
-      <BrowserRouter basename="/hackweek-frontend">
-
+    <BrowserRouter basename="/hackweek-frontend">
       <GalleryApp />
-      </BrowserRouter>
-
-    </ClerkProvider>
+    </BrowserRouter>
   );
 }
 

@@ -1,14 +1,16 @@
-import ImageUpload from "./ImageUpload";
+import useGallery from "../hooks/useGallery";
+import ImageUpload from "../components/ImageUpload";
 
-const Gallery = ({
-  gallery,
-  addImageToGallery,
-  currentUser,
-}: {
-  gallery: UserGallery | null;
-  addImageToGallery: (galleryId: string, image: Image) => void;
-  currentUser: User | null;
-}) => {
+const Gallery = () => {
+  const { currentGallery: gallery, currentUser } = useGallery();
+
+
+  const addImageToGallery = (galleryId: string, image: Image) => {
+    console.log("Adding image to gallery", galleryId, image);
+    // Here you would typically make an API call to add the image to the gallery
+  };
+
+  
   if (!gallery) {
     return <p>Gallery not found.</p>;
   }
@@ -17,10 +19,9 @@ const Gallery = ({
     <div>
       <h2>{gallery.title}</h2>
       <h3>{gallery.description}</h3>
-      <h4> Gallery owner: {gallery.user_id}</h4>
-      <p>is curr user: {gallery.user_id===currentUser?.id}</p>
+      <h4> Gallery owner: {gallery.userId}</h4>
+      <p>is curr user: {gallery.userId === currentUser?.id}</p>
       <div style={{ display: "flex", gap: "10px" }}>
-
         {gallery.images?.map((image) => (
           <img
             style={{ maxWidth: 100 }}
@@ -30,7 +31,7 @@ const Gallery = ({
           />
         ))}
       </div>
-      {gallery.user_id === currentUser?.id && (
+      {gallery.userId === currentUser?.id && (
         <ImageUpload
           galleryId={gallery.id}
           addImageToGallery={(id, image) => {

@@ -1,39 +1,19 @@
-import Gallery from "./Gallery";
-import GalleryList from "./GalleryList";
+import GalleryList from "../components/GalleryList";
+import useGallery from "../hooks/useGallery";
 
-const UserProfile = ({
-  user,
-  currentUser,
-  selectGallery,
-  addImageToGallery,
-}: {
-  user: User | null;
-  currentUser: User | null;
-  selectGallery: (gallery: UserGallery) => void;
-  addImageToGallery: (galleryId: string, image: Image) => void;
-}) => {
+const UserProfile = () => {
+  const { currentUser: user } = useGallery();
   if (!user) {
     return <div>User not found.</div>;
   }
   return (
     <div>
       <h1>{user.username}'s Profile</h1>
-      <img src={user.profile_picture_url} alt={`${user.username}'s profile`} />
+      <img src={user.profilePictureUrl} alt={`${user.username}'s profile`} />
       <p>{user.description}</p>
       <h2>Galleries</h2>
       {user.galleries && user.galleries.length > 0 ? (
-        user.galleries.length === 1 ? (
-          <Gallery
-            gallery={user.galleries[0]}
-            addImageToGallery={addImageToGallery}
-            currentUser={currentUser}
-          />
-        ) : (
-          <GalleryList
-            galleries={user.galleries}
-            selectGallery={selectGallery}
-          />
-        )
+        <GalleryList />
       ) : (
         <p>This user has no galleries.</p>
       )}

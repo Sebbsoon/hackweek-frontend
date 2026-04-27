@@ -1,30 +1,33 @@
 declare global {
   type UserGallery = {
     id: string;
-    user_id: string;
+    userId: string;
     title: string;
-    display_image_url?: string;
+    displayImageUrl?: string;
     images?: Image[];
     description?: string;
   };
   type Image = {
     id: string;
-    gallery_id: string;
+    galleryId: string;
     url: string;
     title?: string;
   };
   type User = {
     id: string;
+    clerkUserId: string;
     username: string;
+    firstName: string;
+    lastName: string;
     galleries: UserGallery[];
-    profile_picture_url: string;
-    description: string;
+    profilePictureUrl: string;
+    description?: string;
   };
   type CreateGalleryPayload = {
     title: string;
     description?: string;
     images?: unknown[];
-    user_id?: string;
+    userId?: string;
   };
 }
 export {};
