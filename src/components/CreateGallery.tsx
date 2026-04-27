@@ -1,6 +1,5 @@
 import { useAuth, useUser } from "@clerk/clerk-react";
 import { useState } from "react";
-import type { CreateGalleryPayload } from "../api/api";
 
 const CreateGallery = ({
   createGallery,
