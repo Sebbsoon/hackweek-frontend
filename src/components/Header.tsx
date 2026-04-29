@@ -2,24 +2,21 @@ import {
   SignedIn,
   SignedOut,
   SignInButton,
-  UserButton,
   useClerk,
+  UserButton,
 } from "@clerk/clerk-react";
 import {
   AppBar,
   Box,
   Button,
   ButtonBase,
-  Toolbar,
-  Typography,
+  Toolbar
 } from "@mui/material";
 import { useNavigate } from "@tanstack/react-router";
-import useGallery from "../hooks/useGallery";
 import linkedImgLogo from "../assets/linkedimg-logo.png";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { currentUser } = useGallery();
   const { signOut } = useClerk();
 
   const baseUrl = import.meta.env.BASE_URL || "/";
@@ -71,15 +68,7 @@ const Header = () => {
 
         <SignedIn>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            {currentUser && (
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ display: { sm: "block" } }}
-              >
-                {currentUser.username}
-              </Typography>
-            )}
+           
             <UserButton />
             <Button
               variant="outlined"

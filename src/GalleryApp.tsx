@@ -9,11 +9,12 @@ import {
   ListItemButton,
   ListItemText,
   Paper,
-  Typography
+  Typography,
 } from "@mui/material";
 import { Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import Header from "./components/Header";
 import useGallery from "./hooks/useGallery";
+import styles from "./GalleryApp.module.css";
 
 const GalleryApp = () => {
   const { isLoaded } = useAuth();
@@ -22,14 +23,6 @@ const GalleryApp = () => {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const { currentUser, setSelectedUser } = useGallery();
-
-  if (!isLoaded) {
-    return (
-      <Box sx={{ display: "grid", placeItems: "center", minHeight: 240 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   const navValue =
     pathname === "/"
@@ -50,44 +43,31 @@ const GalleryApp = () => {
     }
   };
 
+  if (!isLoaded) {
+    return (
+      <Container maxWidth="lg" className={styles.container}>
+        <Header />
+        <Box className={styles.loadingBox}>
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
   return (
-    <Container
-      maxWidth="lg"
-      sx={{
-        px: { xs: 1, sm: 2, md: 3 },
-        py: { xs: 1, sm: 2, md: 3 },
-        pb: { xs: 9, md: 3 },
-      }}
-    >
+    <Container maxWidth="lg" className={styles.container}>
       <Header />
 
-      <Box
-        sx={{
-          mt: { xs: 1, sm: 2 },
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", md: "240px 1fr" },
-          gap: { xs: 0, md: 3 },
-          alignItems: "start",
-        }}
-      >
-        <Paper
-          variant="outlined"
-          sx={{
-            display: { xs: "none", md: "block" },
-            position: "sticky",
-            top: 88,
-            p: 1,
-            borderRadius: 3,
-          }}
-        >
-          <Typography sx={{ px: 1.5, py: 1, fontWeight: 700 }} variant="subtitle2">
+      <Box className={styles.layoutGrid}>
+        <Paper variant="outlined" className={styles.sideNav}>
+          <Typography className={styles.navTitle} variant="subtitle2">
             Navigation
           </Typography>
           <List disablePadding>
             <ListItemButton
               selected={navValue === "home"}
               onClick={() => void navigate({ to: "/" })}
-              sx={{ borderRadius: 2 }}
+              className={styles.navItem}
             >
               <ListItemText primary="Home" />
             </ListItemButton>
@@ -95,7 +75,7 @@ const GalleryApp = () => {
             <ListItemButton
               selected={navValue === "users"}
               onClick={() => void navigate({ to: "/users" })}
-              sx={{ borderRadius: 2 }}
+              className={styles.navItem}
             >
               <ListItemText primary="Users" />
             </ListItemButton>
@@ -107,7 +87,7 @@ const GalleryApp = () => {
                   if (currentUser) setSelectedUser(currentUser);
                   void navigate({ to: "/profile" });
                 }}
-                sx={{ borderRadius: 2 }}
+                className={styles.navItem}
               >
                 <ListItemText primary="My Profile" />
               </ListItemButton>
@@ -115,34 +95,22 @@ const GalleryApp = () => {
           </List>
         </Paper>
 
-        <Paper
-          variant="outlined"
-          sx={{
-            borderRadius: 3,
-            p: { xs: 0, md: 2 },
-            minHeight: { md: "70vh" },
-          }}
-        >
+        <Paper variant="outlined" className={styles.mainContent}>
           <Outlet />
         </Paper>
       </Box>
 
-      <Paper
-        elevation={8}
-        sx={{
-          position: "fixed",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          display: { xs: "block", md: "none" },
-          borderTop: "1px solid",
-          borderColor: "divider",
-        }}
-      >
-        <BottomNavigation showLabels value={navValue} onChange={handleNavChange}>
+      <Paper elevation={8} className={styles.bottomNav}>
+        <BottomNavigation
+          showLabels
+          value={navValue}
+          onChange={handleNavChange}
+        >
           <BottomNavigationAction label="Home" value="home" />
           <BottomNavigationAction label="Users" value="users" />
-          {isSignedIn && <BottomNavigationAction label="My Profile" value="profile" />}
+          {isSignedIn && (
+            <BottomNavigationAction label="My Profile" value="profile" />
+          )}
         </BottomNavigation>
       </Paper>
     </Container>
