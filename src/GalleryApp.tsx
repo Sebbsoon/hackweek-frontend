@@ -21,8 +21,15 @@ const GalleryApp = () => {
 
   if (!isLoaded) {
     return (
-      <Box sx={{ display: "grid", placeItems: "center", minHeight: 240 }}>
-        <CircularProgress />
+      <Box
+        sx={{
+          display: "grid",
+          placeItems: "center",
+          minHeight: "100dvh",
+          bgcolor: "background.default",
+        }}
+      >
+        <CircularProgress sx={{ color: "secondary.main" }} />
       </Box>
     );
   }
@@ -47,22 +54,24 @@ const GalleryApp = () => {
   };
 
   return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        px: { xs: 1, sm: 2 },
-        py: { xs: 1, sm: 2 },
-        pb: { xs: 9, sm: 2 }, // space for mobile bottom nav
-      }}
-    >
-      <Header />
+    <Box sx={{ minHeight: "100dvh", bgcolor: "background.default" }}>
+      <Container
+        maxWidth="sm"
+        sx={{
+          px: { xs: 0, sm: 0 },
+          pb: { xs: 9, sm: 4 },
+        }}
+      >
+        <Header />
 
-      <Box sx={{ mt: { xs: 1, sm: 2 } }}>
-        <Outlet />
-      </Box>
+        <Box sx={{ px: { xs: 1, sm: 2 }, mt: { xs: 1.5, sm: 2.5 } }}>
+          <Outlet />
+        </Box>
+      </Container>
 
+      {/* Mobile bottom nav */}
       <Paper
-        elevation={8}
+        elevation={0}
         sx={{
           position: "fixed",
           left: 0,
@@ -71,17 +80,18 @@ const GalleryApp = () => {
           display: { xs: "block", sm: "none" },
           borderTop: "1px solid",
           borderColor: "divider",
+          bgcolor: "background.paper",
         }}
       >
         <BottomNavigation showLabels value={navValue} onChange={handleNavChange}>
           <BottomNavigationAction label="Home" value="home" />
-          <BottomNavigationAction label="Users" value="users" />
+          <BottomNavigationAction label="Artists" value="users" />
           {isSignedIn && (
             <BottomNavigationAction label="My Profile" value="profile" />
           )}
         </BottomNavigation>
       </Paper>
-    </Container>
+    </Box>
   );
 };
 

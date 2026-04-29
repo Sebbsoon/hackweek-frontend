@@ -7,13 +7,19 @@ const GalleryList = () => {
   const galleries = selectedUser?.galleries;
 
   return (
-    <Box sx={{ p: { xs: 1, sm: 2 } }}>
+    <Box>
       <Stack spacing={0.5} sx={{ mb: 1.5 }}>
-        <Typography variant="h5" component="h1" sx={{ fontWeight: 800 }}>
-          {selectedUser?.username ? `${selectedUser.username}'s galleries` : "Galleries"}
+        <Typography
+          variant="h6"
+          component="h2"
+          sx={{ fontWeight: 700, letterSpacing: -0.2 }}
+        >
+          {selectedUser?.username
+            ? `${selectedUser.username}'s galleries`
+            : "Galleries"}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Browse collections and open a gallery to view images.
+          Open a gallery to view its images.
         </Typography>
       </Stack>
 
