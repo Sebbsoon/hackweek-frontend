@@ -1,4 +1,4 @@
-import GalleryApp from "./views/GalleryApp";
+import GalleryApp from "./GalleryApp";
 
 import { BrowserRouter } from "react-router-dom";
 
