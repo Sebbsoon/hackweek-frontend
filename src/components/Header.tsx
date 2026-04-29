@@ -2,8 +2,8 @@ import {
   SignedIn,
   SignedOut,
   SignInButton,
-  SignOutButton,
   UserButton,
+  useClerk,
 } from "@clerk/clerk-react";
 import {
   AppBar,
@@ -15,10 +15,12 @@ import {
 } from "@mui/material";
 import { useNavigate } from "@tanstack/react-router";
 import useGallery from "../hooks/useGallery";
+import linkedImgLogo from "../assets/linkedimg-logo.png";
 
 const Header = () => {
   const navigate = useNavigate();
   const { currentUser } = useGallery();
+  const { signOut } = useClerk();
 
   const baseUrl = import.meta.env.BASE_URL || "/";
   const afterSignOutUrl = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
@@ -45,12 +47,16 @@ const Header = () => {
           }}
           aria-label="Go to home"
         >
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: 800, letterSpacing: -0.2 }}
-          >
-            LinkedImg
-          </Typography>
+          <Box
+            component="img"
+            src={linkedImgLogo}
+            alt="LinkedImg"
+            sx={{
+              height: 40,
+              width: "auto",
+              display: "block",
+            }}
+          />
         </ButtonBase>
 
         <Box sx={{ flex: 1 }} />
@@ -75,11 +81,13 @@ const Header = () => {
               </Typography>
             )}
             <UserButton />
-            <SignOutButton redirectUrl={afterSignOutUrl}>
-              <Button variant="outlined" size="small">
-                Sign out
-              </Button>
-            </SignOutButton>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => void signOut({ redirectUrl: afterSignOutUrl })}
+            >
+              Sign out
+            </Button>
           </Box>
         </SignedIn>
       </Toolbar>
