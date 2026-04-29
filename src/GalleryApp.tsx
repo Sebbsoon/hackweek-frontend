@@ -13,6 +13,7 @@ import useGallery from "./hooks/useGallery";
 import Home from "./views/Home";
 import UserList from "./views/UserList";
 import UserProfile from "./views/UserProfile";
+import Gallery from "./views/Gallery";
 
 const GalleryApp = () => {
   const { isLoaded } = useAuth();
@@ -61,6 +62,7 @@ const GalleryApp = () => {
         {view === "home" && <Home />}
         {view === "users" && <UserList />}
         {view === "profile" && <UserProfile />}
+        {view === "gallery" && <Gallery />}
       </Box>
 
       {/* Mobile-first navigation */}
