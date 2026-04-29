@@ -12,6 +12,20 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import styles from "./UserProfile.module.css";
+
+type UserNameFields = {
+  firstName?: string | null;
+  lastName?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+};
+
+const getFirstName = (u: User): string =>
+  (u as UserNameFields).firstName ?? (u as UserNameFields).first_name ?? "";
+
+const getLastName = (u: User): string =>
+  (u as UserNameFields).lastName ?? (u as UserNameFields).last_name ?? "";
 
 const UserProfile = () => {
   const { selectedUser: user, currentUser } = useGallery();
@@ -22,20 +36,36 @@ const UserProfile = () => {
 
   const isOwnProfile = user.id === currentUser?.id;
 
+  const firstName = getFirstName(user).trim();
+  const lastName = getLastName(user).trim();
+  const fullName = `${firstName} ${lastName}`.trim();
+
   return (
-    <Box sx={{ p: { xs: 1, sm: 2 } }}>
-      <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2 } }}>
+    <Box className={styles.root}>
+      <Paper variant="outlined" className={styles.card}>
         <Stack spacing={2}>
-          <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+          <Stack direction="row" spacing={2} className={styles.headerRow}>
             <Avatar
               src={user.profilePictureUrl}
               alt={`${user.username}'s profile`}
-              sx={{ width: 56, height: 56 }}
+              className={styles.avatar}
             />
-            <Box sx={{ minWidth: 0 }}>
-              <Typography variant="h5" component="h1" sx={{ fontWeight: 800 }} noWrap>
+            <Box className={styles.headerText}>
+              <Typography
+                variant="h5"
+                component="h1"
+                className={styles.username}
+                noWrap
+              >
                 {user.username}
               </Typography>
+
+              {fullName ? (
+                <Typography variant="body2" color="text.secondary">
+                  {fullName}
+                </Typography>
+              ) : null}
+
               <Typography variant="body2" color="text.secondary">
                 {user.description?.trim() ? user.description : "No bio yet."}
               </Typography>
@@ -51,38 +81,30 @@ const UserProfile = () => {
           )}
 
           {isOwnProfile && (
-            <Accordion variant="outlined" disableGutters sx={{ borderRadius: 2 }}>
+            <Accordion
+              variant="outlined"
+              disableGutters
+              className={styles.accordion}
+            >
               <AccordionSummary
                 aria-controls="create-gallery-content"
                 id="create-gallery-header"
                 expandIcon={
-                  <Box component="span" sx={{ fontSize: 18, lineHeight: 1 }}>
+                  <Box component="span" className={styles.expandIcon}>
                     ▾
                   </Box>
                 }
-                sx={{
-                  px: 2,
-                  "& .MuiAccordionSummary-content, & .MuiAccordionSummary-expandIconWrapper":
-                    {
-                      alignItems: "center",
-                    },
-                  "& .MuiAccordionSummary-content": {
-                    justifyContent: "center",
-                    textAlign: "center",
-                    margin: 0,
-                    my: 1,
-                  },
-                  "& .MuiAccordionSummary-expandIconWrapper": {
-                    marginLeft: 1,
-                  },
-                }}
+                className={styles.accordionSummary}
               >
-                <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+                <Typography
+                  variant="subtitle1"
+                  className={styles.accordionTitle}
+                >
                   Create gallery
                 </Typography>
               </AccordionSummary>
 
-              <AccordionDetails sx={{ px: { xs: 1.5, sm: 2 }, pt: 0, pb: 2 }}>
+              <AccordionDetails className={styles.accordionDetails}>
                 <CreateGallery />
               </AccordionDetails>
             </Accordion>

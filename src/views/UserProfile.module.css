@@ -1,0 +1,86 @@
+.root {
+  padding: 8px;
+}
+
+@media (min-width: 600px) {
+  .root {
+    padding: 16px;
+  }
+}
+
+.card {
+  padding: 12px;
+}
+
+@media (min-width: 600px) {
+  .card {
+    padding: 16px;
+  }
+}
+
+.headerRow {
+  align-items: center;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+}
+
+.headerText {
+  min-width: 0;
+}
+
+.username {
+  font-weight: 800;
+}
+
+.accordion {
+  border-radius: 8px;
+}
+
+.expandIcon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.accordionSummary {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* Center the label + arrow nicely (replaces sx selectors) */
+.accordionSummary :global(.MuiAccordionSummary-content),
+.accordionSummary :global(.MuiAccordionSummary-expandIconWrapper) {
+  align-items: center;
+}
+
+.accordionSummary :global(.MuiAccordionSummary-content) {
+  justify-content: center;
+  text-align: center;
+  margin: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.accordionSummary :global(.MuiAccordionSummary-expandIconWrapper) {
+  margin-left: 8px;
+}
+
+.accordionTitle {
+  font-weight: 800;
+}
+
+.accordionDetails {
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 0;
+  padding-bottom: 16px;
+}
+
+@media (min-width: 600px) {
+  .accordionDetails {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
