@@ -1,6 +1,15 @@
 import { useAuth, useUser } from "@clerk/clerk-react";
 import { useState } from "react";
 import { addImageToGallery } from "../api/api";
+import {
+  Alert,
+  Box,
+  Button,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 const ImageUpload = ({ galleryId }: { galleryId: string }) => {
   const { user } = useUser();
@@ -52,35 +61,79 @@ const ImageUpload = ({ galleryId }: { galleryId: string }) => {
     }
   };
 
-  if (!user) return <div>Please log in to upload images.</div>;
+  if (!user)
+    return (
+      <Alert severity="info" sx={{ mt: 2 }}>
+        Sign in to upload images.
+      </Alert>
+    );
 
   return (
-    <>
-      <h1>Upload Images</h1>
-      <p>Upload your images to gallery {galleryId} here.</p>
+    <Box sx={{ mt: 3 }}>
+      <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2 } }}>
+        <Stack spacing={2}>
+          <Box>
+            <Typography variant="h6" component="h2" sx={{ fontWeight: 800 }}>
+              Add photos
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Select one or more images to upload to this gallery.
+            </Typography>
+          </Box>
 
-      <div>
-        <input type="file" accept="image/*" multiple onChange={handleChange} />
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Description (optional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <button onClick={handleUpload} disabled={files.length === 0 || isUploading}>
-          {isUploading ? "Uploading..." : "Upload"}
-        </button>
-      </div>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ alignItems: "center", flexWrap: "wrap" }}
+          >
+            <Button component="label" variant="outlined" disabled={isUploading}>
+              Choose files
+              <input
+                hidden
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleChange}
+              />
+            </Button>
 
-      {isUploading && <p>Uploading images, please wait...</p>}
-      {error && <p>{error}</p>}
-    </>
+            <Typography variant="body2" color="text.secondary">
+              {files.length > 0 ? `${files.length} selected` : "No files selected"}
+            </Typography>
+          </Stack>
+
+          <TextField
+            label="Title (optional)"
+            placeholder="Use one title for all selected files"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            disabled={isUploading}
+            fullWidth
+          />
+
+          <TextField
+            label="Description (optional)"
+            placeholder="Add a short note"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            disabled={isUploading}
+            fullWidth
+          />
+
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button
+              onClick={handleUpload}
+              disabled={files.length === 0 || isUploading}
+              variant="contained"
+            >
+              {isUploading ? "Uploading…" : "Upload"}
+            </Button>
+          </Box>
+
+          {error && <Alert severity="error">{error}</Alert>}
+        </Stack>
+      </Paper>
+    </Box>
   );
 };
 

@@ -3,11 +3,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { getGalleryImages, getUsers } from "../api/api";
 import { GalleryContext } from "./gallery-context";
 
-export const GalleryProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const GalleryProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentView, setCurrentView] = useState<string>("home");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [galleryImages, setGalleryImages] = useState<Image[]>([]);
@@ -75,6 +71,15 @@ export const GalleryProvider = ({
     setGalleryImages((prev) => prev.filter((img) => img.id !== imageId));
   }, []);
 
+  const addImagesLocally = useCallback((images: Image[]) => {
+    setGalleryImages((prev) => {
+      const existingIds = new Set(prev.map((i) => i.id));
+      const deduped = images.filter((i) => i?.id && !existingIds.has(i.id));
+      // Put newly uploaded images first (change ordering if you prefer)
+      return [...deduped, ...prev];
+    });
+  }, []);
+
   const currentUser =
     user && Array.isArray(users)
       ? (users.find((u) => u.clerkUserId === user.id) ?? null)
@@ -94,6 +99,7 @@ export const GalleryProvider = ({
       galleryImages,
       setGalleryImages,
       removeImageLocally,
+      addImagesLocally, // NEW
     }),
     [
       currentView,
@@ -103,6 +109,7 @@ export const GalleryProvider = ({
       users,
       galleryImages,
       removeImageLocally,
+      addImagesLocally,
     ],
   );
 

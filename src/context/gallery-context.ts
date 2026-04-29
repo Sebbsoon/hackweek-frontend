@@ -12,7 +12,8 @@ export type GalleryContextValue = {
   setUsers: React.Dispatch<React.SetStateAction<User[]>>;
   galleryImages: Image[];
   setGalleryImages: React.Dispatch<React.SetStateAction<Image[]>>;
-  removeImageLocally: (imageId: string) => void; 
+  removeImageLocally: (imageId: string) => void;
+  addImagesLocally: (images: Image[]) => void;
 };
 
 export const GalleryContext = createContext<GalleryContextValue | undefined>(

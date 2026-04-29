@@ -1,45 +1,85 @@
-import { SignedIn, SignedOut, SignOutButton } from "@clerk/clerk-react";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignOutButton,
+  UserButton,
+} from "@clerk/clerk-react";
+import {
+  AppBar,
+  Box,
+  Button,
+  ButtonBase,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import useGallery from "../hooks/useGallery";
-import Register from "../views/Register";
-import Login from "./Login";
 
 const Header = () => {
-  const {
-    currentView: view,
-    setCurrentView: setView,
-    selectedUser,
-  } = useGallery();
+  const { setCurrentView, currentUser } = useGallery();
 
-  const { currentUser, currentGallery } = useGallery();
   return (
-    <header>
-      <p>Current View: {view}</p>
-      <p>Current User: {currentUser?.username || "Not logged in"}</p>
-      <p>
-        Current Gallery:
-        {currentGallery ? currentGallery.title : "None selected"}
-      </p>
-      <p>Selected user: {selectedUser?.username}</p>
-      <div>
-        <button onClick={() => setView("home")}>Home</button>
-        <button onClick={() => setView("profile")}>Profile</button>
-        <button onClick={() => setView("gallery")}>Gallery</button>
-        <button onClick={() => setView("create-gallery")}>
-          Create Gallery
-        </button>
-      </div>
-      <SignedOut>
-        <Login />
-        <hr />
-        <Register />
-      </SignedOut>
-      <SignedIn>
-        <p>
-          You are signed in as {currentUser?.firstName || "unknown"}  {currentUser?.lastName || "unknown"}!
-        </p>
-        <SignOutButton redirectUrl="/hackweek-frontend" />
-      </SignedIn>
-    </header>
+    <AppBar
+      position="sticky"
+      elevation={0}
+      color="transparent"
+      sx={{
+        borderBottom: "1px solid",
+        borderColor: "divider",
+        bgcolor: "background.paper",
+      }}
+    >
+      <Toolbar sx={{ px: { xs: 1, sm: 2 }, minHeight: 56 }}>
+        <ButtonBase
+          onClick={() => setCurrentView("home")}
+          sx={{
+            borderRadius: 1,
+            px: 0.5,
+            py: 0.25,
+            textAlign: "left",
+          }}
+          aria-label="Go to home"
+        >
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: 800, letterSpacing: -0.2 }}
+          >
+            LinkedImg
+          </Typography>
+        </ButtonBase>
+
+        <Box sx={{ flex: 1 }} />
+
+        <SignedOut>
+          <SignInButton mode="modal">
+            <Button variant="contained" size="small">
+              Sign in
+            </Button>
+          </SignInButton>
+        </SignedOut>
+
+        <SignedIn>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {currentUser && (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ display: { sm: "block" } }}
+              >
+                {currentUser?.username}
+              </Typography>
+            )}
+            <UserButton />
+            <SignOutButton redirectUrl="/hackweek-frontend">
+              <Button variant="outlined" size="small">
+                Sign out
+              </Button>
+            </SignOutButton>
+          </Box>
+        </SignedIn>
+      </Toolbar>
+    </AppBar>
   );
 };
+
 export default Header;
