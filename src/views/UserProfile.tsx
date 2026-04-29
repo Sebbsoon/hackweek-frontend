@@ -1,5 +1,6 @@
 import CreateGallery from "../components/CreateGallery";
 import GalleryList from "../components/GalleryList";
+import ProfileQrToggle from "../components/ProfileQrToggle";
 import useGallery from "../hooks/useGallery";
 import {
   Accordion,
@@ -45,30 +46,37 @@ const UserProfile = () => {
       <Paper variant="outlined" className={styles.card}>
         <Stack spacing={2}>
           <Stack direction="row" spacing={2} className={styles.headerRow}>
-            <Avatar
-              src={user.profilePictureUrl}
-              alt={`${user.username}'s profile`}
-              className={styles.avatar}
-            />
-            <Box className={styles.headerText}>
-              <Typography
-                variant="h5"
-                component="h1"
-                className={styles.username}
-                noWrap
-              >
-                {user.username}
-              </Typography>
+            <Stack direction="row" spacing={2} className={styles.headerLeft}>
+              <Avatar
+                src={user.profilePictureUrl}
+                alt={`${user.username}'s profile`}
+                className={styles.avatar}
+              />
 
-              {fullName ? (
-                <Typography variant="body2" color="text.secondary">
-                  {fullName}
+              <Box className={styles.headerText}>
+                <Typography
+                  variant="h5"
+                  component="h1"
+                  className={styles.username}
+                  noWrap
+                >
+                  {user.username}
                 </Typography>
-              ) : null}
 
-              <Typography variant="body2" color="text.secondary">
-                {user.description?.trim() ? user.description : "No bio yet."}
-              </Typography>
+                {fullName ? (
+                  <Typography variant="body2" color="text.secondary">
+                    {fullName}
+                  </Typography>
+                ) : null}
+
+                <Typography variant="body2" color="text.secondary">
+                  {user.description?.trim() ? user.description : "No bio yet."}
+                </Typography>
+              </Box>
+            </Stack>
+
+            <Box className={styles.qrTopRight}>
+              <ProfileQrToggle userId={user.id} />
             </Box>
           </Stack>
 

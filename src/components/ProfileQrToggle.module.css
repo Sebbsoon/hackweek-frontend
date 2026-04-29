@@ -1,0 +1,47 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  /* in the profile header's top-right, keep this aligned */
+  align-items: flex-end;
+}
+
+.toggleBtn {
+  min-height: 40px;
+  align-self: flex-end;
+}
+
+.panel {
+  padding: 12px;
+  border-radius: 8px;
+
+  /* keep it "component-sized" instead of expanding */
+  width: 240px;
+  max-width: calc(100vw - 48px);
+}
+
+.panelInner {
+  align-items: center;
+  text-align: center;
+}
+
+.panelTitle {
+  font-weight: 800;
+}
+
+.qr {
+  /* QR scales to the panel width */
+  width: 100%;
+  height: auto;
+  max-width: 180px;
+
+  border-radius: 8px;
+  background: #fff;
+}
+
+.link {
+  word-break: break-all;
+  user-select: all;
+  max-width: 100%;
+}

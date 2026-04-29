@@ -19,12 +19,15 @@
 }
 
 .headerRow {
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
 }
 
-.avatar {
-  width: 56px;
-  height: 56px;
+.headerLeft {
+  align-items: center;
+  min-width: 0;
+  flex: 1;
 }
 
 .headerText {
@@ -83,4 +86,9 @@
     padding-left: 16px;
     padding-right: 16px;
   }
+}
+
+.qrTopRight {
+  margin-left: auto;
+  align-self: flex-start;
 }
