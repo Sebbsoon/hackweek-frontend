@@ -17,6 +17,7 @@ import {
   Snackbar,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "@tanstack/react-router";
 
 const GalleryCard = ({ gallery }: { gallery: UserGallery }) => {
   const { getToken } = useAuth();
@@ -29,6 +30,7 @@ const GalleryCard = ({ gallery }: { gallery: UserGallery }) => {
     setSelectedUser,
     setUsers,
   } = useGallery();
+  const navigate = useNavigate();
 
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -90,7 +92,10 @@ const GalleryCard = ({ gallery }: { gallery: UserGallery }) => {
   const handleOnClick = () => {
     if (isDeleting) return;
     setCurrentGallery(gallery);
-    setCurrentView("gallery");
+    void navigate({
+      to: "/gallery/$galleryId",
+      params: { galleryId: String(gallery.id) },
+    });
   };
 
   const isOwner = gallery.userId === currentUser?.id;

@@ -1,5 +1,5 @@
-import { useAuth } from "@clerk/clerk-react";
-
+import { useAuth, useUser } from "@clerk/clerk-react";
+import { Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   BottomNavigation,
   BottomNavigationAction,
@@ -10,41 +10,40 @@ import {
 } from "@mui/material";
 import Header from "./components/Header";
 import useGallery from "./hooks/useGallery";
-import Home from "./views/Home";
-import UserList from "./views/UserList";
-import UserProfile from "./views/UserProfile";
-import Gallery from "./views/Gallery";
 
 const GalleryApp = () => {
   const { isLoaded } = useAuth();
-  const {
-    currentView: view,
-    setCurrentView: setView,
-    currentUser,
-    setSelectedUser,
-  } = useGallery();
+  const { isSignedIn } = useUser();
+  const navigate = useNavigate();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  if (!isLoaded)
+  const { currentUser, setSelectedUser } = useGallery();
+
+  if (!isLoaded) {
     return (
       <Box sx={{ display: "grid", placeItems: "center", minHeight: 240 }}>
         <CircularProgress />
       </Box>
     );
+  }
+
+  const navValue =
+    pathname === "/"
+      ? "home"
+      : pathname.startsWith("/users") || pathname.startsWith("/user/")
+        ? "users"
+        : pathname === "/profile"
+          ? "profile"
+          : "home";
 
   const handleNavChange = (_: React.SyntheticEvent, next: string) => {
+    if (next === "home") void navigate({ to: "/" });
+    if (next === "users") void navigate({ to: "/users" });
+
     if (next === "profile") {
-      if (currentUser) {
-        setSelectedUser(currentUser);
-        setView("profile");
-        return;
-      }
-
-      setSelectedUser(null);
-      setView("home");
-      return;
+      if (currentUser) setSelectedUser(currentUser);
+      void navigate({ to: "/profile" });
     }
-
-    setView(next);
   };
 
   return (
@@ -59,13 +58,9 @@ const GalleryApp = () => {
       <Header />
 
       <Box sx={{ mt: { xs: 1, sm: 2 } }}>
-        {view === "home" && <Home />}
-        {view === "users" && <UserList />}
-        {view === "profile" && <UserProfile />}
-        {view === "gallery" && <Gallery />}
+        <Outlet />
       </Box>
 
-      {/* Mobile-first navigation */}
       <Paper
         elevation={8}
         sx={{
@@ -78,10 +73,12 @@ const GalleryApp = () => {
           borderColor: "divider",
         }}
       >
-        <BottomNavigation showLabels value={view} onChange={handleNavChange}>
+        <BottomNavigation showLabels value={navValue} onChange={handleNavChange}>
           <BottomNavigationAction label="Home" value="home" />
           <BottomNavigationAction label="Users" value="users" />
-          <BottomNavigationAction label="My Profile" value="profile" />
+          {isSignedIn && (
+            <BottomNavigationAction label="My Profile" value="profile" />
+          )}
         </BottomNavigation>
       </Paper>
     </Container>

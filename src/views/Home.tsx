@@ -1,10 +1,12 @@
 import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 import { Box, Button, Divider, Paper, Stack, Typography } from "@mui/material";
+import { useNavigate } from "@tanstack/react-router";
 import useGallery from "../hooks/useGallery";
 import styles from "./Home.module.css";
 
 const Home = () => {
-  const { setCurrentView, currentUser, setSelectedUser } = useGallery();
+  const navigate = useNavigate();
+  const { currentUser, setSelectedUser } = useGallery();
 
   return (
     <Box className={styles.root}>
@@ -44,11 +46,11 @@ const Home = () => {
                 fullWidth
                 onClick={() => {
                   if (!currentUser) {
-                    setCurrentView("home");
+                    void navigate({ to: "/" });
                     return;
                   }
                   setSelectedUser(currentUser);
-                  setCurrentView("profile");
+                  void navigate({ to: "/profile" });
                 }}
               >
                 My profile

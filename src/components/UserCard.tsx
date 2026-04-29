@@ -1,4 +1,3 @@
-import useGallery from "../hooks/useGallery";
 import {
   Avatar,
   Card,
@@ -7,14 +6,13 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "@tanstack/react-router";
 
 const UserCard = ({ user }: { user: User }) => {
-  const { setSelectedUser, setCurrentView } = useGallery();
+  const navigate = useNavigate();
 
   const handleOnClick = () => {
-    setSelectedUser(user);
-    setCurrentView("profile");
-    console.log("UserCard clicked:", { user });
+    void navigate({ to: "/user/$userId", params: { userId: String(user.id) } });
   };
 
   return (
