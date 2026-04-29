@@ -10,6 +10,8 @@
 
 .card {
   padding: 12px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
 }
 
 @media (min-width: 600px) {
@@ -36,6 +38,7 @@
 
 .username {
   font-weight: 800;
+  letter-spacing: -0.2px;
 }
 
 .usernameLink {
@@ -44,7 +47,8 @@
 
   /* make it feel like a link */
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 8px;
+  transition: background-color 160ms ease;
   padding: 2px 4px;
   margin-left: -4px; /* aligns with text block a bit nicer */
 }
@@ -54,8 +58,13 @@
   text-underline-offset: 4px;
 }
 
+.usernameLink:hover {
+  background: rgba(37, 99, 235, 0.07);
+}
+
 .accordion {
   border-radius: 8px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .expandIcon {

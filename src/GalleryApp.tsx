@@ -1,13 +1,17 @@
 import { useAuth, useUser } from "@clerk/clerk-react";
-import { Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
   CircularProgress,
   Container,
+  List,
+  ListItemButton,
+  ListItemText,
   Paper,
+  Typography
 } from "@mui/material";
+import { Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import Header from "./components/Header";
 import useGallery from "./hooks/useGallery";
 
@@ -48,17 +52,79 @@ const GalleryApp = () => {
 
   return (
     <Container
-      maxWidth="sm"
+      maxWidth="lg"
       sx={{
-        px: { xs: 1, sm: 2 },
-        py: { xs: 1, sm: 2 },
-        pb: { xs: 9, sm: 2 }, // space for mobile bottom nav
+        px: { xs: 1, sm: 2, md: 3 },
+        py: { xs: 1, sm: 2, md: 3 },
+        pb: { xs: 9, md: 3 },
       }}
     >
       <Header />
 
-      <Box sx={{ mt: { xs: 1, sm: 2 } }}>
-        <Outlet />
+      <Box
+        sx={{
+          mt: { xs: 1, sm: 2 },
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "240px 1fr" },
+          gap: { xs: 0, md: 3 },
+          alignItems: "start",
+        }}
+      >
+        <Paper
+          variant="outlined"
+          sx={{
+            display: { xs: "none", md: "block" },
+            position: "sticky",
+            top: 88,
+            p: 1,
+            borderRadius: 3,
+          }}
+        >
+          <Typography sx={{ px: 1.5, py: 1, fontWeight: 700 }} variant="subtitle2">
+            Navigation
+          </Typography>
+          <List disablePadding>
+            <ListItemButton
+              selected={navValue === "home"}
+              onClick={() => void navigate({ to: "/" })}
+              sx={{ borderRadius: 2 }}
+            >
+              <ListItemText primary="Home" />
+            </ListItemButton>
+
+            <ListItemButton
+              selected={navValue === "users"}
+              onClick={() => void navigate({ to: "/users" })}
+              sx={{ borderRadius: 2 }}
+            >
+              <ListItemText primary="Users" />
+            </ListItemButton>
+
+            {isSignedIn && (
+              <ListItemButton
+                selected={navValue === "profile"}
+                onClick={() => {
+                  if (currentUser) setSelectedUser(currentUser);
+                  void navigate({ to: "/profile" });
+                }}
+                sx={{ borderRadius: 2 }}
+              >
+                <ListItemText primary="My Profile" />
+              </ListItemButton>
+            )}
+          </List>
+        </Paper>
+
+        <Paper
+          variant="outlined"
+          sx={{
+            borderRadius: 3,
+            p: { xs: 0, md: 2 },
+            minHeight: { md: "70vh" },
+          }}
+        >
+          <Outlet />
+        </Paper>
       </Box>
 
       <Paper
@@ -68,7 +134,7 @@ const GalleryApp = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          display: { xs: "block", sm: "none" },
+          display: { xs: "block", md: "none" },
           borderTop: "1px solid",
           borderColor: "divider",
         }}
@@ -76,9 +142,7 @@ const GalleryApp = () => {
         <BottomNavigation showLabels value={navValue} onChange={handleNavChange}>
           <BottomNavigationAction label="Home" value="home" />
           <BottomNavigationAction label="Users" value="users" />
-          {isSignedIn && (
-            <BottomNavigationAction label="My Profile" value="profile" />
-          )}
+          {isSignedIn && <BottomNavigationAction label="My Profile" value="profile" />}
         </BottomNavigation>
       </Paper>
     </Container>

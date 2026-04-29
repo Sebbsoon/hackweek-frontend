@@ -1,6 +1,7 @@
 import { useAuth, useUser } from "@clerk/clerk-react";
 import { useState } from "react";
 import { addImageToGallery } from "../api/api";
+import useGallery from "../hooks/useGallery";
 import {
   Alert,
   Box,
@@ -14,6 +15,7 @@ import {
 const ImageUpload = ({ galleryId }: { galleryId: string }) => {
   const { user } = useUser();
   const { getToken } = useAuth();
+  const { addImagesLocally } = useGallery();
 
   const [files, setFiles] = useState<File[]>([]);
   const [title, setTitle] = useState("");
@@ -22,8 +24,7 @@ const ImageUpload = ({ galleryId }: { galleryId: string }) => {
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(event.target.files ?? []);
-    setFiles(selectedFiles);
+    setFiles(Array.from(event.target.files ?? []));
   };
 
   const handleUpload = async () => {
@@ -36,7 +37,7 @@ const ImageUpload = ({ galleryId }: { galleryId: string }) => {
       const token = await getToken();
       const sharedTitle = title.trim();
 
-      await Promise.all(
+      const uploadedImages = await Promise.all(
         files.map((file) =>
           addImageToGallery(
             galleryId,
@@ -50,6 +51,8 @@ const ImageUpload = ({ galleryId }: { galleryId: string }) => {
         ),
       );
 
+      addImagesLocally(uploadedImages);
+
       setFiles([]);
       setTitle("");
       setDescription("");
@@ -61,12 +64,13 @@ const ImageUpload = ({ galleryId }: { galleryId: string }) => {
     }
   };
 
-  if (!user)
+  if (!user) {
     return (
       <Alert severity="info" sx={{ mt: 2 }}>
         Sign in to upload images.
       </Alert>
     );
+  }
 
   return (
     <Box sx={{ mt: 3 }}>
@@ -81,11 +85,7 @@ const ImageUpload = ({ galleryId }: { galleryId: string }) => {
             </Typography>
           </Box>
 
-          <Stack
-            direction="row"
-            spacing={1}
-            sx={{ alignItems: "center", flexWrap: "wrap" }}
-          >
+          <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap" }}>
             <Button component="label" variant="outlined" disabled={isUploading}>
               Choose files
               <input
@@ -104,7 +104,6 @@ const ImageUpload = ({ galleryId }: { galleryId: string }) => {
 
           <TextField
             label="Title (optional)"
-            placeholder="Use one title for all selected files"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             disabled={isUploading}
@@ -113,7 +112,6 @@ const ImageUpload = ({ galleryId }: { galleryId: string }) => {
 
           <TextField
             label="Description (optional)"
-            placeholder="Add a short note"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             disabled={isUploading}
