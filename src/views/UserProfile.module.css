@@ -38,6 +38,22 @@
   font-weight: 800;
 }
 
+.usernameLink {
+  display: inline-flex;
+  align-items: center;
+
+  /* make it feel like a link */
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 2px 4px;
+  margin-left: -4px; /* aligns with text block a bit nicer */
+}
+
+.usernameLink:hover .username {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 .accordion {
   border-radius: 8px;
 }

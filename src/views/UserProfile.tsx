@@ -2,6 +2,7 @@ import CreateGallery from "../components/CreateGallery";
 import GalleryList from "../components/GalleryList";
 import ProfileQrToggle from "../components/ProfileQrToggle";
 import useGallery from "../hooks/useGallery";
+import { useNavigate } from "@tanstack/react-router";
 import {
   Accordion,
   AccordionDetails,
@@ -12,6 +13,7 @@ import {
   Paper,
   Stack,
   Typography,
+  ButtonBase,
 } from "@mui/material";
 import styles from "./UserProfile.module.css";
 
@@ -29,6 +31,7 @@ const getLastName = (u: User): string =>
   (u as UserNameFields).lastName ?? (u as UserNameFields).last_name ?? "";
 
 const UserProfile = () => {
+  const navigate = useNavigate();
   const { selectedUser: user, currentUser } = useGallery();
 
   if (!user) {
@@ -40,6 +43,18 @@ const UserProfile = () => {
   const firstName = getFirstName(user).trim();
   const lastName = getLastName(user).trim();
   const fullName = `${firstName} ${lastName}`.trim();
+
+  const goToThisUsersProfile = () => {
+    if (isOwnProfile) {
+      void navigate({ to: "/profile" });
+      return;
+    }
+
+    void navigate({
+      to: "/user/$userId",
+      params: { userId: String(user.id) },
+    });
+  };
 
   return (
     <Box className={styles.root}>
@@ -54,14 +69,20 @@ const UserProfile = () => {
               />
 
               <Box className={styles.headerText}>
-                <Typography
-                  variant="h5"
-                  component="h1"
-                  className={styles.username}
-                  noWrap
+                <ButtonBase
+                  onClick={goToThisUsersProfile}
+                  className={styles.usernameLink}
+                  aria-label={`Open ${user.username}'s profile`}
                 >
-                  {user.username}
-                </Typography>
+                  <Typography
+                    variant="h5"
+                    component="h1"
+                    className={styles.username}
+                    noWrap
+                  >
+                    {user.username}
+                  </Typography>
+                </ButtonBase>
 
                 {fullName ? (
                   <Typography variant="body2" color="text.secondary">
