@@ -13,10 +13,15 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "@tanstack/react-router";
 import useGallery from "../hooks/useGallery";
 
 const Header = () => {
-  const { setCurrentView, currentUser } = useGallery();
+  const navigate = useNavigate();
+  const { currentUser } = useGallery();
+
+  const baseUrl = import.meta.env.BASE_URL || "/";
+  const afterSignOutUrl = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
 
   return (
     <AppBar
@@ -31,7 +36,7 @@ const Header = () => {
     >
       <Toolbar sx={{ px: { xs: 1, sm: 2 }, minHeight: 56 }}>
         <ButtonBase
-          onClick={() => setCurrentView("home")}
+          onClick={() => void navigate({ to: "/" })}
           sx={{
             borderRadius: 1,
             px: 0.5,
@@ -66,11 +71,11 @@ const Header = () => {
                 color="text.secondary"
                 sx={{ display: { sm: "block" } }}
               >
-                {currentUser?.username}
+                {currentUser.username}
               </Typography>
             )}
             <UserButton />
-            <SignOutButton redirectUrl="/hackweek-frontend">
+            <SignOutButton redirectUrl={afterSignOutUrl}>
               <Button variant="outlined" size="small">
                 Sign out
               </Button>
