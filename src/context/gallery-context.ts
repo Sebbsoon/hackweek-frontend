@@ -10,6 +10,11 @@ export type GalleryContextValue = {
   setCurrentGallery: React.Dispatch<React.SetStateAction<UserGallery | null>>;
   users: User[];
   setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+
+  // NEW
+  usersLoading: boolean;
+  usersError: string | null;
+
   galleryImages: Image[];
   setGalleryImages: React.Dispatch<React.SetStateAction<Image[]>>;
   removeImageLocally: (imageId: string) => void;

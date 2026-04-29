@@ -1,0 +1,71 @@
+.root {
+  padding: 8px;
+}
+
+@media (min-width: 600px) {
+  .root {
+    padding: 16px;
+  }
+}
+
+.card {
+  padding: 16px;
+  border-radius: 8px;
+}
+
+@media (min-width: 600px) {
+  .card {
+    padding: 24px;
+  }
+}
+
+.title {
+  font-weight: 900;
+}
+
+.subtitle {
+  margin-top: 4px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (min-width: 600px) {
+  .actions {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+.actionButton {
+  min-height: 44px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+@media (min-width: 600px) {
+  .features {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.featureCard {
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.featureTitle {
+  font-weight: 800;
+}
+
+.tip {
+  /* no-op (kept for future tweaks) */
+}

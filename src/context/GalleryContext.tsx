@@ -11,24 +11,19 @@ export const GalleryProvider = ({ children }: { children: React.ReactNode }) => 
     null,
   );
   const [users, setUsers] = useState<User[]>([]);
+
+  // Start in loading state to avoid calling setState synchronously in the effect body
+  const [usersLoading, setUsersLoading] = useState(true);
+  const [usersError, setUsersError] = useState<string | null>(null);
+
   const { user } = useUser();
 
   useEffect(() => {
-    console.log("GalleryContext state updated:", {
-      currentView,
-      selectedUser,
-      currentGallery,
-      users,
-      galleryImages,
-    });
-  }, [currentView, selectedUser, currentGallery, users, galleryImages]);
-
-  useEffect(() => {
-    let isMounted = true;
+    let cancelled = false;
 
     getUsers()
       .then((data) => {
-        if (!isMounted) return;
+        if (cancelled) return;
 
         const normalizedUsers = Array.isArray(data)
           ? data
@@ -37,33 +32,40 @@ export const GalleryProvider = ({ children }: { children: React.ReactNode }) => 
             : [];
 
         setUsers(normalizedUsers);
+        setUsersError(null);
       })
       .catch((error) => {
         console.error("Error fetching users:", error);
-        if (isMounted) setUsers([]);
+        if (cancelled) return;
+
+        setUsers([]);
+        setUsersError("Failed to load users. Please try again.");
+      })
+      .finally(() => {
+        if (!cancelled) setUsersLoading(false);
       });
 
     return () => {
-      isMounted = false;
+      cancelled = true;
     };
   }, []);
 
   useEffect(() => {
-    let isMounted = true;
+    let cancelled = false;
 
     if (currentGallery) {
       getGalleryImages(currentGallery.id)
         .then((images) => {
-          if (isMounted) setGalleryImages(images);
+          if (!cancelled) setGalleryImages(images);
         })
         .catch((error) => {
           console.error("Error fetching gallery images:", error);
-          if (isMounted) setGalleryImages([]);
+          if (!cancelled) setGalleryImages([]);
         });
     }
 
     return () => {
-      isMounted = false;
+      cancelled = true;
     };
   }, [currentGallery]);
 
@@ -75,7 +77,6 @@ export const GalleryProvider = ({ children }: { children: React.ReactNode }) => 
     setGalleryImages((prev) => {
       const existingIds = new Set(prev.map((i) => i.id));
       const deduped = images.filter((i) => i?.id && !existingIds.has(i.id));
-      // Put newly uploaded images first (change ordering if you prefer)
       return [...deduped, ...prev];
     });
   }, []);
@@ -96,10 +97,14 @@ export const GalleryProvider = ({ children }: { children: React.ReactNode }) => 
       setCurrentGallery,
       users,
       setUsers,
+
+      usersLoading,
+      usersError,
+
       galleryImages,
       setGalleryImages,
       removeImageLocally,
-      addImagesLocally, // NEW
+      addImagesLocally,
     }),
     [
       currentView,
@@ -107,6 +112,8 @@ export const GalleryProvider = ({ children }: { children: React.ReactNode }) => 
       currentUser,
       currentGallery,
       users,
+      usersLoading,
+      usersError,
       galleryImages,
       removeImageLocally,
       addImagesLocally,

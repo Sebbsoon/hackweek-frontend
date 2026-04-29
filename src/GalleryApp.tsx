@@ -1,19 +1,18 @@
 import { useAuth } from "@clerk/clerk-react";
 
-import Gallery from "./views/Gallery";
-import Header from "./components/Header";
-import useGallery from "./hooks/useGallery";
-import Home from "./views/Home";
-import UserProfile from "./views/UserProfile";
-import CreateGallery from "./components/CreateGallery";
 import {
+  BottomNavigation,
+  BottomNavigationAction,
   Box,
   CircularProgress,
   Container,
-  BottomNavigation,
-  BottomNavigationAction,
   Paper,
 } from "@mui/material";
+import Header from "./components/Header";
+import useGallery from "./hooks/useGallery";
+import Home from "./views/Home";
+import UserList from "./views/UserList";
+import UserProfile from "./views/UserProfile";
 
 const GalleryApp = () => {
   const { isLoaded } = useAuth();
@@ -33,7 +32,6 @@ const GalleryApp = () => {
 
   const handleNavChange = (_: React.SyntheticEvent, next: string) => {
     if (next === "profile") {
-      // Always show the logged-in user's profile when "My Profile" is tapped
       if (currentUser) {
         setSelectedUser(currentUser);
         setView("profile");
@@ -61,9 +59,8 @@ const GalleryApp = () => {
 
       <Box sx={{ mt: { xs: 1, sm: 2 } }}>
         {view === "home" && <Home />}
+        {view === "users" && <UserList />}
         {view === "profile" && <UserProfile />}
-        {view === "gallery" && <Gallery />}
-        {view === "create-gallery" && <CreateGallery />}
       </Box>
 
       {/* Mobile-first navigation */}
@@ -81,6 +78,7 @@ const GalleryApp = () => {
       >
         <BottomNavigation showLabels value={view} onChange={handleNavChange}>
           <BottomNavigationAction label="Home" value="home" />
+          <BottomNavigationAction label="Users" value="users" />
           <BottomNavigationAction label="My Profile" value="profile" />
         </BottomNavigation>
       </Paper>
