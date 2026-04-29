@@ -1,8 +1,23 @@
 import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
-import { Box, Button, Divider, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Chip, Paper, Stack, Typography } from "@mui/material";
 import { useNavigate } from "@tanstack/react-router";
 import useGallery from "../hooks/useGallery";
 import styles from "./Home.module.css";
+
+const FEATURES = [
+  {
+    label: "Explore",
+    description: "Browse artist galleries and discover the latest uploads.",
+  },
+  {
+    label: "Create",
+    description: "Build your own galleries and add photos when signed in.",
+  },
+  {
+    label: "Organise",
+    description: "Keep collections tidy with descriptions and easy management.",
+  },
+];
 
 const Home = () => {
   const navigate = useNavigate();
@@ -10,75 +25,98 @@ const Home = () => {
 
   return (
     <Box className={styles.root}>
-      <Paper variant="outlined" className={styles.card}>
-        <Stack spacing={2}>
-          <Box>
-            <Typography variant="h4" component="h1" className={styles.title}>
-              Welcome to LinkedImg
-            </Typography>
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              className={styles.subtitle}
-            >
-              Discover artist galleries, share your work, and keep your photos
-              organized.
-            </Typography>
+      {/* Hero */}
+      <Box className={styles.hero}>
+        <Chip
+          label="Photo galleries, simplified"
+          size="small"
+          sx={{
+            bgcolor: "rgba(99,102,241,0.1)",
+            color: "secondary.main",
+            fontWeight: 600,
+            mb: 2,
+            border: "1px solid rgba(99,102,241,0.2)",
+          }}
+        />
+        <Typography
+          variant="h4"
+          component="h1"
+          className={styles.heroTitle}
+          sx={{ mb: 1.5 }}
+        >
+          Welcome to{" "}
+          <Box component="span" sx={{ color: "secondary.main" }}>
+            LinkedImg
           </Box>
+        </Typography>
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          className={styles.heroSubtitle}
+        >
+          Discover artist galleries, share your work, and keep your photos
+          organised in one clean space.
+        </Typography>
 
-          <Stack className={styles.actions} spacing={1}>
-            <SignedOut>
-              <SignInButton mode="modal">
-                <Button
-                  variant="outlined"
-                  className={styles.actionButton}
-                  fullWidth
-                >
-                  Sign in to create
-                </Button>
-              </SignInButton>
-            </SignedOut>
-
-            <SignedIn>
+        <Stack className={styles.actions} direction="row" spacing={1.5}>
+          <SignedOut>
+            <SignInButton mode="modal">
               <Button
-                variant="outlined"
+                variant="contained"
+                size="large"
                 className={styles.actionButton}
-                fullWidth
-                onClick={() => {
-                  if (!currentUser) {
-                    void navigate({ to: "/" });
-                    return;
-                  }
-                  setSelectedUser(currentUser);
-                  void navigate({ to: "/profile" });
-                }}
               >
-                My profile
+                Get started
               </Button>
-            </SignedIn>
-          </Stack>
-          <Paper variant="outlined" square className={styles.featureCard}>
-            <Box className={styles.features}>
-              <Typography variant="h5" className={styles.featureTitle}>Explore</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Browse artists and open galleries to view their latest uploads.
-              </Typography>
-              <Divider sx={{ my: 1 }} />
-              <Typography variant="h5" className={styles.featureTitle}>Create</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Make your own galleries and add photos when you’re signed in.
-              </Typography>
-              <Divider sx={{ my: 1 }} />
+            </SignInButton>
+          </SignedOut>
 
-              <Typography variant="h5" className={styles.featureTitle}>Organize</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Keep collections tidy with descriptions and easy image
-                management.
-              </Typography>
-            </Box>
-          </Paper>
+          <SignedIn>
+            <Button
+              variant="contained"
+              size="large"
+              className={styles.actionButton}
+              onClick={() => {
+                if (!currentUser) {
+                  void navigate({ to: "/" });
+                  return;
+                }
+                setSelectedUser(currentUser);
+                void navigate({ to: "/profile" });
+              }}
+            >
+              My profile
+            </Button>
+          </SignedIn>
+
+          <Button
+            variant="outlined"
+            size="large"
+            className={styles.actionButton}
+            onClick={() => void navigate({ to: "/users" })}
+          >
+            Browse artists
+          </Button>
         </Stack>
-      </Paper>
+      </Box>
+
+      {/* Feature cards */}
+      <Box className={styles.featuresGrid}>
+        {FEATURES.map(({ label, description }) => (
+          <Paper key={label} variant="outlined" className={styles.featureCard}>
+            <Typography
+              variant="h6"
+              className={styles.featureLabel}
+              sx={{ mb: 0.75 }}
+            >
+              {label}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {description}
+            </Typography>
+          </Paper>
+        ))}
+      </Box>
     </Box>
   );
 };

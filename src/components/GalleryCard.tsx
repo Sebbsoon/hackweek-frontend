@@ -4,6 +4,7 @@ import useGallery from "../hooks/useGallery";
 import { useState } from "react";
 import {
   Alert,
+  Box,
   Button,
   Card,
   CardActionArea,
@@ -41,25 +42,26 @@ const GalleryCard = ({ gallery }: { gallery: UserGallery }) => {
   }>({ open: false, severity: "info", message: "" });
 
   const removeGalleryLocally = (galleryId: string) => {
-    // Update selectedUser galleries (if the selected user owns this gallery)
     if (selectedUser?.id === gallery.userId) {
       setSelectedUser((prev) => {
         if (!prev) return prev;
-        const nextGalleries = (prev.galleries ?? []).filter((g) => g.id !== galleryId);
+        const nextGalleries = (prev.galleries ?? []).filter(
+          (g) => g.id !== galleryId,
+        );
         return { ...prev, galleries: nextGalleries };
       });
     }
 
-    // Update users list (keep global list in sync)
     setUsers((prev) =>
       prev.map((u) => {
         if (u.id !== gallery.userId) return u;
-        const nextGalleries = (u.galleries ?? []).filter((g) => g.id !== galleryId);
+        const nextGalleries = (u.galleries ?? []).filter(
+          (g) => g.id !== galleryId,
+        );
         return { ...u, galleries: nextGalleries };
       }),
     );
 
-    // If the deleted gallery is currently open, clear it and navigate away
     if (currentGallery?.id === galleryId) {
       setCurrentGallery(null);
       setCurrentView("profile");
@@ -82,7 +84,7 @@ const GalleryCard = ({ gallery }: { gallery: UserGallery }) => {
         open: true,
         severity: "error",
         message:
-          "Couldn’t remove gallery. If it has images, remove them first (or enable cascade delete).",
+          "Couldn't remove gallery. If it has images, remove them first (or enable cascade delete).",
       });
     } finally {
       setIsDeleting(false);
@@ -102,14 +104,34 @@ const GalleryCard = ({ gallery }: { gallery: UserGallery }) => {
 
   return (
     <>
-      <Card variant="outlined">
+      <Card
+        variant="outlined"
+        sx={{
+          borderRadius: "12px",
+          border: "1px solid rgba(0,0,0,0.08)",
+          transition: "box-shadow 0.18s ease, transform 0.18s ease",
+          "&:hover": {
+            boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+            transform: "translateY(-1px)",
+          },
+        }}
+      >
         <CardActionArea onClick={handleOnClick} disabled={isDeleting}>
-          <CardContent>
-            <Typography variant="h6" component="h2" noWrap>
+          <CardContent sx={{ pb: isOwner ? 1 : 2 }}>
+            <Typography
+              variant="h6"
+              component="h2"
+              noWrap
+              sx={{ fontWeight: 700, letterSpacing: -0.2 }}
+            >
               {gallery.title}
             </Typography>
             {!!gallery.description && (
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mt: 0.25 }}
+              >
                 {gallery.description}
               </Typography>
             )}
@@ -117,18 +139,20 @@ const GalleryCard = ({ gallery }: { gallery: UserGallery }) => {
         </CardActionArea>
 
         {isOwner && (
-          <CardActions sx={{ justifyContent: "flex-end" }}>
+          <CardActions sx={{ justifyContent: "flex-end", pt: 0, px: 1.5, pb: 1.5 }}>
             <Button
               color="error"
-              variant="outlined"
+              variant="text"
+              size="small"
               disabled={isDeleting}
+              sx={{ fontWeight: 600, fontSize: "0.75rem" }}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setConfirmOpen(true);
               }}
             >
-              Remove gallery
+              Remove
             </Button>
           </CardActions>
         )}
@@ -140,13 +164,19 @@ const GalleryCard = ({ gallery }: { gallery: UserGallery }) => {
         aria-labelledby="delete-gallery-title"
         aria-describedby="delete-gallery-description"
       >
-        <DialogTitle id="delete-gallery-title">Remove gallery?</DialogTitle>
+        <DialogTitle id="delete-gallery-title" sx={{ fontWeight: 700 }}>
+          Remove gallery?
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-gallery-description">
-            This will remove <strong>{gallery.title}</strong>.
+            This will permanently remove{" "}
+            <Box component="strong" sx={{ color: "text.primary" }}>
+              {gallery.title}
+            </Box>
+            .
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
           <Button
             onClick={() => setConfirmOpen(false)}
             disabled={isDeleting}

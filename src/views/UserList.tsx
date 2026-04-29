@@ -14,7 +14,6 @@ import {
 
 const normalize = (v: unknown) => String(v ?? "").trim().toLowerCase();
 
-// Some APIs return camelCase, others snake_case. Support both without `any`.
 type UserNameFields = {
   firstName?: string | null;
   lastName?: string | null;
@@ -55,47 +54,60 @@ const UserList = () => {
     !usersLoading && !usersError && filteredUsers.length === 0;
 
   return (
-    <Box sx={{ p: { xs: 1, sm: 2 } }}>
-      <Stack spacing={0.75} sx={{ mb: 1.5 }}>
-        <Typography variant="h5" component="h1" sx={{ fontWeight: 800 }}>
+    <Box sx={{ pb: 2 }}>
+      <Stack spacing={0.5} sx={{ mb: 2 }}>
+        <Typography
+          variant="h5"
+          component="h1"
+          sx={{ fontWeight: 800, letterSpacing: -0.3 }}
+        >
           Browse artists
         </Typography>
-
-        <TextField
-          value={term}
-          onChange={(e) => setTerm(e.target.value)}
-          placeholder="Search by username or name…"
-          fullWidth
-          size="small"
-          slotProps={{
-            input: {
-              endAdornment: term ? (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="Clear search"
-                    edge="end"
-                    onClick={() => setTerm("")}
-                  >
-                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                      Clear
-                    </Typography>
-                  </IconButton>
-                </InputAdornment>
-              ) : undefined,
-            },
-          }}
-        />
-
-        {!usersLoading && !usersError && (
-          <Typography variant="caption" color="text.secondary">
-            {filteredUsers.length} result{filteredUsers.length === 1 ? "" : "s"}
-            {term.trim() ? ` for “${term.trim()}”` : ""}
-          </Typography>
-        )}
+        <Typography variant="body2" color="text.secondary">
+          Discover photographers and explore their galleries.
+        </Typography>
       </Stack>
 
+      <TextField
+        value={term}
+        onChange={(e) => setTerm(e.target.value)}
+        placeholder="Search by username or name…"
+        fullWidth
+        size="small"
+        sx={{ mb: 1.5 }}
+        slotProps={{
+          input: {
+            endAdornment: term ? (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="Clear search"
+                  edge="end"
+                  size="small"
+                  onClick={() => setTerm("")}
+                >
+                  <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                    ✕
+                  </Typography>
+                </IconButton>
+              </InputAdornment>
+            ) : undefined,
+          },
+        }}
+      />
+
+      {!usersLoading && !usersError && (
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: "block", mb: 1.5 }}
+        >
+          {filteredUsers.length} result{filteredUsers.length === 1 ? "" : "s"}
+          {term.trim() ? ` for "${term.trim()}"` : ""}
+        </Typography>
+      )}
+
       {usersError && (
-        <Alert severity="error" sx={{ mb: 1.5 }}>
+        <Alert severity="error" sx={{ mb: 1.5, borderRadius: 2 }}>
           {usersError}
         </Alert>
       )}
@@ -103,12 +115,12 @@ const UserList = () => {
       {usersLoading ? (
         <Stack spacing={1.25}>
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} variant="rounded" height={76} animation="wave" />
+            <Skeleton key={i} variant="rounded" height={80} animation="wave" sx={{ borderRadius: 2 }} />
           ))}
         </Stack>
       ) : showEmptyState ? (
         <Typography variant="body2" color="text.secondary">
-          No users match “{term.trim()}”.
+          No users match &ldquo;{term.trim()}&rdquo;.
         </Typography>
       ) : (
         <Stack spacing={1.25}>

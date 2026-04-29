@@ -1,43 +1,46 @@
 .root {
-  padding: 8px;
-}
-
-@media (min-width: 600px) {
-  .root {
-    padding: 16px;
-  }
+  padding: 0 0 32px;
 }
 
 .card {
-  padding: 12px;
+  padding: 20px;
+  border-radius: 16px;
 }
 
 @media (min-width: 600px) {
   .card {
-    padding: 16px;
+    padding: 28px;
   }
 }
 
+/* ── Owner link ────────────────────────────────────────── */
 .ownerButton {
   display: inline-flex;
   border-radius: 8px;
-  padding: 2px 4px;
+  padding: 2px 6px;
+  margin-left: -6px;
   text-align: left;
+  transition: background 0.15s;
+}
+
+.ownerButton:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .ownerName {
   font-weight: 800;
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  letter-spacing: -0.3px;
 }
 
+/* ── Accordion ─────────────────────────────────────────── */
 .accordion {
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .expandIcon {
   font-size: 18px;
   line-height: 1;
+  color: #71717a;
 }
 
 .accordionSummary {
@@ -45,7 +48,6 @@
   padding-right: 16px;
 }
 
-/* Center label + arrow as a group */
 .accordionSummary :global(.MuiAccordionSummary-content),
 .accordionSummary :global(.MuiAccordionSummary-expandIconWrapper) {
   align-items: center;
@@ -53,8 +55,8 @@
 
 .accordionSummary :global(.MuiAccordionSummary-content) {
   margin: 0;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   justify-content: center;
   text-align: center;
 }
@@ -64,32 +66,37 @@
 }
 
 .accordionTitle {
-  font-weight: 800;
+  font-weight: 700;
+  color: #6366f1;
 }
 
 .accordionDetails {
-  padding-left: 12px;
-  padding-right: 12px;
-  padding-top: 0;
-  padding-bottom: 16px;
+  padding: 0 12px 16px;
 }
 
 @media (min-width: 600px) {
   .accordionDetails {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding: 0 16px 20px;
   }
 }
 
+/* ── Image grid ────────────────────────────────────────── */
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
+@media (min-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media (min-width: 600px) {
   .grid {
     grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
   }
 }
 
@@ -98,64 +105,76 @@
   gap: 6px;
 }
 
+.thumbButton {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
 .thumb {
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  border-radius: 12px;
-  border: 1px solid;
-  border-color: var(--mui-palette-divider, rgba(0, 0, 0, 0.12));
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: block;
+}
+
+.thumbButton:hover .thumb {
+  transform: scale(1.03);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 .deleteBtn {
-  min-height: 40px;
+  min-height: 36px;
+  font-size: 0.75rem;
+  border-radius: 8px;
 }
 
+/* ── Image viewer dialog ───────────────────────────────── */
 .viewerPaper {
-  /* keep the dialog inside the viewport */
   margin: 16px;
   width: calc(100vw - 32px);
   max-width: 960px;
   box-sizing: border-box;
+  border-radius: 16px;
 }
 
 .viewerContent {
   display: grid;
   gap: 10px;
-
-  /* make room for the close button */
-  padding: 52px 12px 12px;
-
-  max-height: calc(90vh - 32px);
+  padding: 52px 16px 16px;
+  max-height: calc(92vh - 32px);
   overflow: hidden;
   box-sizing: border-box;
-
   position: relative;
+  background: #0a0a0a;
 }
 
 .viewerClose {
-  /* Force top-right even if MUI styles interfere */
   position: absolute !important;
   top: 12px !important;
   right: 12px !important;
   left: auto !important;
   bottom: auto !important;
-
-  /* fallback if absolute ever gets dropped */
   justify-self: end;
-
   z-index: 2;
-
   width: 36px;
   height: 36px;
-  border-radius: 18px;
-
-  background: rgba(255, 0, 0, 0.75);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
   color: #fff;
-
-  font-size: 24px;
+  font-size: 22px;
   line-height: 36px;
   text-align: center;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s;
+}
+
+.viewerClose:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .viewerClose:focus-visible {
@@ -163,17 +182,18 @@
   outline-offset: 2px;
 }
 
+.viewerTitle {
+  color: rgba(255, 255, 255, 0.85);
+  text-align: center;
+  font-weight: 500;
+}
+
 .viewerImage {
   display: block;
-
-  /* critical: never exceed available width */
   width: 100%;
   max-width: 100%;
-
   height: auto;
-  max-height: 75vh;
+  max-height: 78vh;
   object-fit: contain;
-
-  border-radius: 12px;
-  background: #000;
+  border-radius: 10px;
 }
